@@ -23,21 +23,21 @@ def _empty_emotion_response() -> Dict[str, Optional[Any]]:
     return result
 
 
-def emotion_detector(text_to_analyze: Optional[str]) -> Dict[str, Optional[Any]]:
+def emotion_detector(text_to_analyse: Optional[str]) -> Dict[str, Optional[Any]]:
     """Analyze the emotions expressed in the provided text.
 
     Args:
-        text_to_analyze: The input text to be evaluated.
+        text_to_analyse: The input text to be evaluated.
 
     Returns:
         A dictionary containing emotion scores for 'anger', 'disgust', 'fear',
         'joy', 'sadness', and the string label of the 'dominant_emotion'.
         If the input is empty or the upstream service fails, returns None for all keys.
     """
-    if not text_to_analyze or not str(text_to_analyze).strip():
+    if not text_to_analyse or not str(text_to_analyse).strip():
         return _empty_emotion_response()
 
-    payload = {"raw_document": {"text": text_to_analyze}}
+    payload = {"raw_document": {"text": text_to_analyse}}
     headers = {"grpc-metadata-mm-model-id": WATSON_MODEL_ID}
 
     try:
@@ -47,7 +47,7 @@ def emotion_detector(text_to_analyze: Optional[str]) -> Dict[str, Optional[Any]]
             headers=headers,
             timeout=10,
         )
-        if response.status_code != 200:
+        if response.status_code == 400 or response.status_code != 200:
             return _empty_emotion_response()
 
         data = response.json()
